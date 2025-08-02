@@ -81,6 +81,9 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER', default='')
 
+# Frontend URL for email links
+FRONTEND_URL = config('FRONTEND_URL', default='https://bike-rental-frontend-lifz.vercel.app')
+
 # Logging configuration
 LOGGING = {
     'version': 1,

@@ -145,7 +145,9 @@ class UserRegistrationView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             # token = generate_verification_token(user.email)
             token = PasswordResetTokenGenerator().make_token(user)
-            verification_link = f"http://localhost:5173/verify-email?uid={uid}&token={token}"
+            # Get frontend URL from environment or use production URL
+            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://bike-rental-frontend-lifz.vercel.app')
+            verification_link = f"{frontend_url}/verify-email?uid={uid}&token={token}"
             send_mail(
                 subject="Verify your Bike Rental Account",
                 message=f"Click here to verify your email: {verification_link}",
@@ -224,7 +226,9 @@ class PasswordResetRequestView(APIView):
 
         try:
             token = generate_reset_token(user.email)
-            reset_link = f"http://localhost:5173/reset-password?token={token}"
+            # Get frontend URL from environment or use production URL
+            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://bike-rental-frontend-lifz.vercel.app')
+            reset_link = f"{frontend_url}/reset-password?token={token}"
 
             # Create a more professional email message
             email_message = f"""
