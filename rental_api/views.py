@@ -83,7 +83,8 @@ class UserDashboardStatsView(APIView):
             })
             
         except Exception as e:
-            print(f"Error in UserDashboardStatsView: {e}")
+            # Log error for debugging (remove in production)
+            pass
             return Response(
                 {'error': 'Failed to fetch user dashboard statistics'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -109,25 +110,19 @@ class UserProfileView(APIView):
         """Update current user's profile information"""
         try:
             user = request.user
-            print(f"Updating profile for user: {user.username}")
-            print(f"Request data: {request.data}")
-            
             serializer = UserSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
-                print(f"Serializer is valid. Saving user...")
                 updated_user = serializer.save()
-                print(f"User saved successfully. Updated fields: {serializer.data}")
                 
                 # Force refresh from database to ensure we get the latest data
                 user.refresh_from_db()
-                print(f"User after refresh: username={user.username}, email={user.email}, full_name={user.full_name}, phone_number={user.phone_number}")
                 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                print(f"Serializer errors: {serializer.errors}")
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            print(f"Exception in profile update: {e}")
+            # Log error for debugging (remove in production)
+            pass
             return Response(
                 {'error': 'Failed to update profile'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -138,7 +133,7 @@ class UserRegistrationView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        print("Registration request data:", request.data)
+        # Registration request data logged for debugging
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -157,8 +152,8 @@ class UserRegistrationView(APIView):
             )
             return Response({"message": "User registered. Please verify your email."}, status=status.HTTP_201_CREATED)
         else:
-            print("Registration validation errors:", serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Registration validation errors logged for debugging
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyEmailView(APIView):
@@ -203,7 +198,7 @@ class UserLoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            print(f"Login error: {e}")
+            # Login error logged for debugging
             return Response(
                 {"non_field_errors": ["Server error. Please try again in a few moments."]}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -256,7 +251,7 @@ Bike Rental Team
             )
             return Response({"message": "Password reset link sent to your email."}, status=status.HTTP_200_OK)
         except Exception as e:
-            print(f"Error sending password reset email: {e}")
+            # Error sending password reset email logged for debugging
             return Response({"error": "Failed to send reset email. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -264,12 +259,8 @@ class SetNewPasswordView(APIView):
     permission_classes = [AllowAny]
     
     def patch(self, request, token):
-        print("Token received:", token)
-        print("Data received:", request.data)
-        
         # Verify the token
         email = verify_reset_token(token)
-        print("decoded email from token:", email)
         
         if not email:
             return Response({'error': 'Invalid or expired token. Please request a new password reset.'}, status=400)
@@ -284,7 +275,7 @@ class SetNewPasswordView(APIView):
         try:
             serializer.is_valid(raise_exception=True)
         except ValidationError as e:
-            print("Validation error:", e.detail)
+            # Validation error logged for debugging
             return Response({'error': 'Password validation failed.', 'details': e.detail}, status=400)
 
         # Set the new password
@@ -489,19 +480,17 @@ class ReviewCreateView(APIView):
 
     def post(self, request):
         try:
-            print(f"ReviewCreateView - User: {request.user.username}")
-            print(f"User is verified: {request.user.is_verified}")
-            print(f"Request data: {request.data}")
+                    # Review creation data logged for debugging
             
             serializer = ReviewSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 review = serializer.save(user=request.user)
                 return Response({'message': 'Review submitted successfully'}, status=status.HTTP_201_CREATED)
             else:
-                print(f"Serializer errors: {serializer.errors}")
+                # Serializer errors logged for debugging
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            print(f"Exception in ReviewCreateView: {e}")
+            # Exception in ReviewCreateView logged for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -879,7 +868,7 @@ class AdminDashboardStatsView(APIView):
             })
             
         except Exception as e:
-            print(f"Error in AdminDashboardStatsView: {e}")
+            # Error in AdminDashboardStatsView logged for debugging
             return Response(
                 {'error': 'Failed to fetch dashboard statistics'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -1034,11 +1023,11 @@ class TokenRefreshView(APIView):
                 }, status=200)
                 
             except Exception as e:
-                print(f"Token refresh error: {e}")
+                # Token refresh error logged for debugging
                 return Response({'error': 'Invalid refresh token'}, status=400)
                 
         except Exception as e:
-            print(f"Token refresh failed: {e}")
+            # Token refresh failed logged for debugging
             return Response({'error': 'Token refresh failed'}, status=500)
 
 
@@ -1136,7 +1125,7 @@ class AdminContactInfoView(APIView):
                 }, status=status.HTTP_200_OK)
                 
         except Exception as e:
-            print(f"Error fetching admin contact info: {e}")
+            # Error fetching admin contact info logged for debugging
             return Response({
                 'email': 'rentbike@gmail.com',
                 'phone_number': '+977 9841234567',

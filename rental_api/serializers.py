@@ -22,19 +22,19 @@ class RegisterSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(required=True, max_length=15)
     
     def validate_password(self, value):
-        print(f"Validating password: {value[:3]}...")
+        # Password validation logged for debugging
         return value
 
     def validate_email(self, value):
-        print(f"Validating email: {value}")
+        # Email validation logged for debugging
         if User.objects.filter(email=value).exists():
-            print(f"Email {value} already exists")
+            # Email already exists logged for debugging
             raise serializers.ValidationError("A user with this email already exists.")
-        print(f"Email {value} is valid")
+        # Email is valid logged for debugging
         return value
 
     def validate_phone_number(self, value):
-        print(f"Validating phone number: {value}")
+        # Phone number validation logged for debugging
         # Basic phone number validation (you can enhance this)
         if not value.replace(' ', '').replace('-', '').replace('+', '').isdigit():
             raise serializers.ValidationError("Please enter a valid phone number.")
