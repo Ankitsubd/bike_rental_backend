@@ -93,7 +93,8 @@ try:
     cloudinary.config(
         cloud_name=config('CLOUDINARY_CLOUD_NAME', default='dxkjqsjl9'),
         api_key=config('CLOUDINARY_API_KEY', default='216491684514667'),
-        api_secret=config('CLOUDINARY_API_SECRET', default='6N8URohCzLDuYg5ypXGFJD__spI')
+        api_secret=config('CLOUDINARY_API_SECRET', default='6N8URohCzLDuYg5ypXGFJD__spI'),
+        secure=True  # Force HTTPS URLs
     )
 except ImportError:
     # Cloudinary not installed, skip configuration
