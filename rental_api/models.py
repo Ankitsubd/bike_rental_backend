@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
+try:
+    from cloudinary.models import CloudinaryField
+except ImportError:
+    # Fallback to regular ImageField if Cloudinary is not available
+    from django.db.models import ImageField as CloudinaryField
 
 class User(AbstractUser):
     is_verified = models.BooleanField(default=False)
@@ -31,7 +36,7 @@ class Bike(models.Model):
     bike_type = models.CharField(max_length=50)
     price_per_hour = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=BIKE_STATUS_CHOICES, default='available')
-    image = models.ImageField(upload_to='bikes/', blank=True, null=True)
+    image = CloudinaryField('bikes', blank=True, null=True)
     image_url = models.URLField(blank=True, null=True, help_text="External image URL (alternative to file upload)")
     description = models.TextField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True, help_text="Contact phone number for this bike")

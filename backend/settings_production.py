@@ -84,6 +84,21 @@ DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER', default='')
 # Frontend URL for email links
 FRONTEND_URL = config('FRONTEND_URL', default='https://bike-rental-frontend-lifz.vercel.app')
 
+# Cloudinary Configuration
+try:
+    import cloudinary
+    import cloudinary.uploader
+    import cloudinary.api
+
+    cloudinary.config(
+        cloud_name=config('CLOUDINARY_CLOUD_NAME', default='dxkjqsjl9'),
+        api_key=config('CLOUDINARY_API_KEY', default='216491684514667'),
+        api_secret=config('CLOUDINARY_API_SECRET', default='6N8URohCzLDuYg5ypXGFJD__spI')
+    )
+except ImportError:
+    # Cloudinary not installed, skip configuration
+    pass
+
 # Logging configuration
 LOGGING = {
     'version': 1,

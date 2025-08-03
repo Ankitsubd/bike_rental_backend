@@ -12,6 +12,8 @@ inflection==0.5.1
 itsdangerous==2.2.0
 jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
+cloudinary==1.44.1
+django-cloudinary-storage==0.3.0
 packaging==25.0
 pillow==11.3.0
 PyJWT==2.9.0
