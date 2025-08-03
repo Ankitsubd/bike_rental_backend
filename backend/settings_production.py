@@ -21,9 +21,19 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': config('DATABASE_URL', default=BASE_DIR / 'db.sqlite3'),
+        'NAME': BASE_DIR / 'db.sqlite3',  # Use absolute path
     }
 }
+
+# Ensure database file persists
+import os
+DB_PATH = os.path.join(BASE_DIR, 'db.sqlite3')
+if not os.path.exists(DB_PATH):
+    # Create empty database file if it doesn't exist
+    import sqlite3
+    conn = sqlite3.connect(DB_PATH)
+    conn.close()
+    print(f"Created database file at: {DB_PATH}")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/

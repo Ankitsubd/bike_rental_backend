@@ -321,6 +321,9 @@ class BikeListView(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Bike.objects.all()
         
+        # Log all query parameters for debugging
+        print(f"🔍 Query parameters: {dict(self.request.query_params)}")
+        
         # Handle type filtering - support both 'type' and 'bike_type' parameters
         bike_type = self.request.query_params.get('type') or self.request.query_params.get('bike_type')
         if bike_type:
@@ -355,7 +358,14 @@ class BikeListView(viewsets.ReadOnlyModelViewSet):
         else:
             queryset = queryset.order_by('-added_on')
         
-        print(f"📦 Final queryset count: {queryset.count()}")
+        final_count = queryset.count()
+        print(f"📦 Final queryset count: {final_count}")
+        
+        # Log some sample results for debugging
+        if final_count > 0:
+            sample_bikes = list(queryset[:3].values('name', 'bike_type', 'status'))
+            print(f"📋 Sample results: {sample_bikes}")
+        
         return queryset
 
 
