@@ -130,25 +130,34 @@ class BikeSerializer(serializers.ModelSerializer):
     is_available = serializers.SerializerMethodField()
     rating_display = serializers.SerializerMethodField()
     image = serializers.ImageField(required=False)  # Allow optional for updates
+    image_url = serializers.URLField(required=False)  # Allow optional for updates
 
     class Meta:
         model = Bike
         fields = '__all__'
 
     def validate_image(self, value):
-        """Validate image file if provided"""
+        """Validate image file or URL if provided"""
         if value is None:
             # No image provided - this is allowed for updates
             return value
         
-        # Check file size (5MB limit)
-        if value.size > 5 * 1024 * 1024:
-            raise serializers.ValidationError("Image file size must be less than 5MB.")
+        # If it's a string (URL), validate it
+        if isinstance(value, str):
+            if not value.startswith(('http://', 'https://')):
+                raise serializers.ValidationError("Please provide a valid image URL starting with http:// or https://")
+            return value
         
-        # Check file type
-        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
-        if value.content_type not in allowed_types:
-            raise serializers.ValidationError("Please upload a valid image file (JPG, PNG, GIF).")
+        # If it's a file, validate file properties
+        if hasattr(value, 'size'):
+            # Check file size (5MB limit)
+            if value.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError("Image file size must be less than 5MB.")
+            
+            # Check file type
+            allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+            if value.content_type not in allowed_types:
+                raise serializers.ValidationError("Please upload a valid image file (JPG, PNG, GIF).")
         
         return value
 
@@ -163,9 +172,9 @@ class BikeSerializer(serializers.ModelSerializer):
         if data.get('price_per_hour') and data['price_per_hour'] <= 0:
             raise serializers.ValidationError("Price must be a positive number.")
         
-        # Validate image is provided for new bikes only
-        if not self.instance and not data.get('image'):
-            raise serializers.ValidationError("Bike image is required for new bikes.")
+        # Validate image is provided for new bikes only (either image or image_url)
+        if not self.instance and not data.get('image') and not data.get('image_url'):
+            raise serializers.ValidationError("Bike image is required for new bikes. Please upload an image file or provide an image URL.")
         
         return data
 

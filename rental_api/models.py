@@ -32,6 +32,7 @@ class Bike(models.Model):
     price_per_hour = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=BIKE_STATUS_CHOICES, default='available')
     image = models.ImageField(upload_to='bikes/', blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True, help_text="External image URL (alternative to file upload)")
     description = models.TextField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True, help_text="Contact phone number for this bike")
     added_on = models.DateTimeField(auto_now_add=True)
