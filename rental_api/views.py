@@ -324,8 +324,38 @@ class BikeListView(viewsets.ReadOnlyModelViewSet):
         # Handle type filtering - support both 'type' and 'bike_type' parameters
         bike_type = self.request.query_params.get('type') or self.request.query_params.get('bike_type')
         if bike_type:
+            print(f"🔍 Filtering by bike_type: {bike_type}")
             queryset = queryset.filter(bike_type=bike_type)
         
+        # Handle status filtering
+        status = self.request.query_params.get('status')
+        if status:
+            print(f"🔍 Filtering by status: {status}")
+            queryset = queryset.filter(status=status)
+        
+        # Handle search
+        search = self.request.query_params.get('search')
+        if search:
+            print(f"🔍 Searching for: {search}")
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(brand__icontains=search) |
+                Q(model__icontains=search) |
+                Q(bike_type__icontains=search)
+            )
+        
+        # Handle ordering
+        ordering = self.request.query_params.get('ordering')
+        if ordering:
+            print(f"🔍 Ordering by: {ordering}")
+            if ordering.startswith('-'):
+                queryset = queryset.order_by(ordering)
+            else:
+                queryset = queryset.order_by(ordering)
+        else:
+            queryset = queryset.order_by('-added_on')
+        
+        print(f"📦 Final queryset count: {queryset.count()}")
         return queryset
 
 
