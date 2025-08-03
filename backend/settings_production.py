@@ -17,10 +17,11 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Use persistent SQLite in production
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': config('DATABASE_URL', default=BASE_DIR / 'db.sqlite3'),
     }
 }
 
